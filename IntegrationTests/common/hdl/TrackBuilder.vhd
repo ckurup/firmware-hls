@@ -320,7 +320,7 @@ signal barrel_id_1                 : TrackletIDType := (others => '0');
 -- getfm fsm state
 type getfm_fsm_state_type is (Idle, WaitMemory, GettingData, Done);
 signal getfm_fsm_state             : getfm_fsm_state_type := Idle;  
-type wait_fsm_state_type is (Idle, WaitMemory, DataReady);
+type wait_fsm_state_type is (Idle, WaitMemory, WaitMemory2, DataReady);
 signal wait_fsm_state              : wait_fsm_state_type := Idle;  
 signal num_barrel                  : natural := 0;
 signal invalid_data_array          : std_logic_vector(NFMBarrel-1 downto 0) := (others => '0');
@@ -477,6 +477,8 @@ begin
               wait_fsm_state <= WaitMemory;
             end if;
           when WaitMemory =>
+            wait_fsm_state <= WaitMemory2;
+          when WaitMemory2 =>
             -- It takes 2 clock cycles for the data to appear
             wait_fsm_state <= DataReady;
           when DataReady =>
@@ -502,11 +504,19 @@ begin
       barrel_fm_write_addr_done <= '0';
       done_fm_data_collection   <= '0';
       barrel_buf_wr_data_array  <= (others =>(others =>'0'));
+      barrel_buf_wr_en_array    <= (others =>'0');
+      barrel_buf_rd_en_array    <= (others =>'0');
       trackFit_data             <= (TFSEEDTYPE => (others => '0'), Rinv => (others => '0'), Phi0 => (others => '0'), Z0 => (others => '0'), T => (others => '0'), barrel_stub_mems => (others =>(StubValid => '0', StubIndex => (others => '0'), StubR => (others => '0'), PhiRes => (others => '0'), ZRes => (others => '0'), TrackIndex => (others => '0'))), TrackValid => '0');
       invalid_data_array        <= (others =>'0');
       index_full_matches        <= 0;
-      bx_o_V_ap_vld <= '0';
-      ap_done <= '0';  
+      bx_o_V_ap_vld             <= '0';
+      ap_done                   <= '0';  
+      barrel_valid              <= (others =>'0');
+      trackWord_V_write         <= '0';
+      barrelStubWords_0_V_write <= '0';
+      barrelStubWords_1_V_write <= '0';
+      barrelStubWords_2_V_write <= '0';
+      barrelStubWords_3_V_write <= '0';
     else 
       if ap_start = '1' then
           reg_bx_V  <= bx_V;
@@ -521,6 +531,14 @@ begin
             end if;
             -- Initializing for every event
             done_fm_data_collection   <= '0';
+--            barrel_buf_wr_en_array    <= (others =>'0');
+--            barrel_buf_rd_en_array    <= (others =>'0');
+            barrel_valid              <= (others =>'0');
+            trackWord_V_write         <= '0';
+            barrelStubWords_0_V_write <= '0';
+            barrelStubWords_1_V_write <= '0';
+            barrelStubWords_2_V_write <= '0';
+            barrelStubWords_3_V_write <= '0';
             trackFit_data      <= (TFSEEDTYPE => (others => '0'), Rinv => (others => '0'), Phi0 => (others => '0'), Z0 => (others => '0'), T => (others => '0'), barrel_stub_mems => (others =>(StubValid => '0', StubIndex => (others => '0'), StubR => (others => '0'), PhiRes => (others => '0'), ZRes => (others => '0'), TrackIndex => (others => '0'))), TrackValid => '0');
             invalid_data_array        <= (others =>'0');
             FM_52_DATA_inputs  <= (barrelFullMatches_0_dataarray_data_V_q0, barrelFullMatches_1_dataarray_data_V_q0, barrelFullMatches_2_dataarray_data_V_q0, barrelFullMatches_3_dataarray_data_V_q0, barrelFullMatches_4_dataarray_data_V_q0, barrelFullMatches_5_dataarray_data_V_q0,
