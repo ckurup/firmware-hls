@@ -219,12 +219,6 @@ constant kInvalidTrackletID        : TrackletIDType := std_logic_vector(to_unsig
 signal min_id_d                    : TrackletIDType := kInvalidTrackletID;
 signal barrel_min_id               : TrackletIDType := kInvalidTrackletID;
 signal disk_min_id                 : TrackletIDType := kInvalidTrackletID;
-
-type barrel_min_id_type is array (0 to NFMBarrel-1) of TrackletIDType;
-type disk_min_id_type is array (0 to NFMDisk-1) of TrackletIDType;
-signal barrel_min_id_array         : barrel_min_id_type := (others =>(others =>'0'));
-signal disk_min_id_array           : disk_min_id_type := (others =>(others =>'0'));
-
 subtype BXType is std_logic_vector(kNBits_BX-1 downto 0);
 signal reg_bx_V                    : BXType := (others => '0');
 -- List of regions for memory template parameters
@@ -274,10 +268,6 @@ signal FM_52_NENT_0_inputs_d         : t_arr_FM_52_NENT_array := (others =>(othe
 signal FM_52_NENT_1_inputs_d         : t_arr_FM_52_NENT_array := (others =>(others =>'0'));
 signal FM_52_NENT_inputs_d           : t_arr_FM_52_NENT_array := (others =>(others =>'0'));
 
-type   stub_data_type is array (0 to buffer_depth-1) of std_logic_vector(buffer_width - 1 downto 0);                                                        
-signal barrel_stub_array           : stub_data_type := (others =>(others =>'0'));
-signal disk_stub_array             : stub_data_type := (others =>(others =>'0'));
-
 signal barrel_stub_0_d              : std_logic_vector(buffer_width - 1 downto 0) := (others => '0'); 
 signal barrel_stub_1_d              : std_logic_vector(buffer_width - 1 downto 0) := (others => '0');
 signal barrel_stub_d                : std_logic_vector(buffer_width - 1 downto 0) := (others => '0'); 
@@ -285,16 +275,9 @@ signal barrel_stub_index_d          : std_logic_vector(9 downto 0) := (others =>
 signal barrel_stub_r_d              : std_logic_vector(6 downto 0) := (others => '0');
 signal barrel_phi_res_d             : std_logic_vector(11 downto 0) := (others => '0');
 signal barrel_z_res_d               : std_logic_vector(8 downto 0) := (others => '0');
-
-type   trackletid_data_type is array (0 to buffer_depth-1) of TrackletIDType;
-signal barrel_trackletid_array     : trackletid_data_type := (others =>(others =>'0'));
-signal disk_trackletid_array       : trackletid_data_type := (others =>(others =>'0'));
-
 signal barrel_id_0_d                : TrackletIDType := (others => '0'); 
 signal barrel_id_1_d                : TrackletIDType := (others => '0');
--- getfm fsm state
-type getfm_fsm_state_type is (Idle, WaitMemory, GettingData, Done);
-signal getfm_fsm_state             : getfm_fsm_state_type := Idle;  
+-- wait fsm state
 type wait_fsm_state_type is (Idle, WaitMemory, WaitMemory2, DataReady);
 signal wait_fsm_state              : wait_fsm_state_type := Idle;  
 signal num_barrel                  : natural := 0;
@@ -664,8 +647,7 @@ trackletParameters_8_dataarray_data_V_q0, trackletParameters_9_dataarray_data_V_
             
             -- Retrieve the full information for each full match that has the minimum
             -- tracklet ID and assign it to the appropriate field of the TrackFit object.
-            -- There can be up to eight matches (3 bits)
-            
+            -- There can be up to eight matches (3 bits)            
             nMatches := (others => '0');         
             barrel_stub_association : for j in 0 to NBarrelStubs-1 loop
               if j = 0 then
