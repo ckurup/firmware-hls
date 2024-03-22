@@ -803,7 +803,7 @@ trackletParameters_8_dataarray_data_V_q0, trackletParameters_9_dataarray_data_V_
 --                else
                   barrel_buf_wr_data_array(j) <= FM_52_DATA_inputs(j);
                 --end if;
-                barrel_buf_wr_en_array(j) <= '1';
+                barrel_buf_wr_en_array(j) <= not invalid_data_array(2)(j);
               end loop barrel_circular_buffer_update;
               done_fm_data_collection <= '1'; 
             
