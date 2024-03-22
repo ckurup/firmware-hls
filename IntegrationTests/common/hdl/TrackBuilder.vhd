@@ -285,7 +285,7 @@ signal num_barrel                  : natural := 0;
 constant DELAY                     : natural   := 3;
 type t_arr_invalid is array (0 to NFMBarrel-1) of std_logic;
 type t_arr_invalid_array is array (0 to DELAY-1) of t_arr_invalid;
-signal invalid_data_array          : t_arr_invalid_array := (others =>(others =>'0'));
+signal invalid_data_array          : t_arr_invalid_array := (others =>(others =>'1'));
 --type t_arr_invalid is array (0 to DELAY-1) of std_logic_vector(NFMBarrel-1 downto 0);
 --type t_arr_barrel_valid is array (0 to DELAY-1) of std_logic_vector(NFMBarrel-1 downto 0);
 type t_arr_barrel_valid is array (0 to NFMBarrel-1) of std_logic;
@@ -456,7 +456,7 @@ begin
       barrel_buf_wr_en_array    <= (others =>'0');
       barrel_buf_rd_en_array    <= (others =>'0');
       trackFit_data             <= (TFSEEDTYPE => (others => '0'), StubIndexInner => (others => '0'), StubIndexOuter => (others => '0'), Rinv => (others => '0'), Phi0 => (others => '0'), Z0 => (others => '0'), T => (others => '0'), barrel_stub_mems => (others =>(StubValid => '0', StubIndex => (others => '0'), StubR => (others => '0'), PhiRes => (others => '0'), ZRes => (others => '0'), TrackIndex => (others => '0'))), TrackValid => '0');
-      invalid_data_array        <= (others =>(others =>'0'));
+      invalid_data_array        <= (others =>(others =>'1'));
       index_events              <= 0;
       bx_o_V_ap_vld             <= '0';
       ap_done                   <= '0';  
@@ -509,7 +509,7 @@ begin
               empty <= '1';
               FM_52_ADDR_outputs        <= (others =>(others =>'0'));
               FM_52_DATA_inputs         <= (others =>(others =>'0'));
-              invalid_data_array        <= (others =>(others =>'0'));
+              invalid_data_array        <= (others =>(others =>'1'));
             else
               empty <= '0';
             end if;
